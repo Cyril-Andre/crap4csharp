@@ -32,7 +32,7 @@ The package declares the repository's CC0-1.0 license and contributor attributio
 - The upstream JSON contribution is still under review. This package pins the fork's tested contract; an upstream release can replace it after a compatibility check.
 - `crap4csharp` invokes `dotnet test` on target projects, so users need a suitable .NET SDK and the target's test dependencies even though the tool itself targets .NET 8.
 - On 2026-10-30, the official NuGet flat-container endpoint returned 404 for `Crap4CSharp.Tool`, and a NuGet search for `crap4csharp` found only `crap4csharp` by another publisher. This establishes that the proposed package ID has no published versions at the time of the check; it does not reserve the ID. NuGet assigns package ownership to the publishing account, not the `.nuspec` author. Recheck availability and choose the publisher account immediately before any public publication.
-- The existing `crap4csharp` package is also a .NET tool. A global installation may collide on the `crap4csharp` command name. Mr. Das needs to decide whether to keep this command name or choose a distinct one before public publication.
+- The existing `crap4csharp` package is also a .NET tool. Its published `0.5.1` archive declares `<Command Name="crap4csharp">` in `tools/net10.0/any/DotnetToolSettings.xml`, confirming an exact command-name collision. Mr. Das needs to decide whether to keep this command name or choose a distinct one before public publication.
 - The four bundled runtime dependencies declare MIT. Their original MIT text and third-party notices are included in the package, with the mapping in `THIRD-PARTY-NOTICES.md`. Recheck the mapping whenever dependency versions or packaged assemblies change.
 
 ## Local verification
