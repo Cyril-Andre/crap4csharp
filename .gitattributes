@@ -1,2 +1,4 @@
 # Normalize line endings: store LF in the repo, check out native on each platform.
 * text=auto
+# Keep upstream license and notice files byte-for-byte on every host.
+licenses/* -text -diff

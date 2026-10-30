@@ -5,6 +5,17 @@ param(
 
 $ErrorActionPreference = 'Stop'
 $packagePath = (Resolve-Path $PackageDirectory).Path
+$packageFile = Join-Path $packagePath 'Crap4CSharp.Tool.0.1.0-preview.1.nupkg'
+if (-not (Test-Path $packageFile)) { throw 'Expected tool package was not found' }
+$archive = [System.IO.Compression.ZipFile]::OpenRead($packageFile)
+try {
+    $entries = @($archive.Entries | ForEach-Object FullName)
+    foreach ($required in @('LICENSE', 'THIRD-PARTY-NOTICES.md', 'licenses/MIT.txt', 'licenses/Roslyn-4.14.0-ThirdPartyNotices.rtf', 'licenses/DotNetRuntime-9.0.0-ThirdPartyNotices.txt')) {
+        if ($required -notin $entries) { throw "Missing package notice: $required" }
+    }
+} finally {
+    $archive.Dispose()
+}
 New-Item -ItemType Directory -Path $ToolDirectory -Force | Out-Null
 $toolPath = (Resolve-Path $ToolDirectory).Path
 $configPath = Join-Path $toolPath 'nuget.config'

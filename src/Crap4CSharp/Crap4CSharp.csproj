@@ -17,6 +17,11 @@
 
   <ItemGroup>
     <None Include="../../README.md" Pack="true" PackagePath="/" />
+    <None Include="../../LICENSE" Pack="true" PackagePath="/" />
+    <None Include="../../THIRD-PARTY-NOTICES.md" Pack="true" PackagePath="/" />
+    <None Include="../../licenses/MIT.txt" Pack="true" PackagePath="licenses/" />
+    <None Include="../../licenses/Roslyn-4.14.0-ThirdPartyNotices.rtf" Pack="true" PackagePath="licenses/" />
+    <None Include="../../licenses/DotNetRuntime-9.0.0-ThirdPartyNotices.txt" Pack="true" PackagePath="licenses/" />
     <PackageReference Include="Microsoft.CodeAnalysis.CSharp" Version="4.14.0" />
   </ItemGroup>
 
