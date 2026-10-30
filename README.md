@@ -97,6 +97,22 @@ Build:
 dotnet build -c Release
 ```
 
+### Install the preview .NET tool
+
+The JSON-capable fork can be packaged as `Crap4CSharp.Tool` version `0.1.0-preview.1`. The checkout's `global.json` requires .NET SDK 8.0.406 or a later compatible .NET 8 feature band; check `dotnet --list-sdks` before packing. From this checkout:
+
+```bash
+dotnet pack src/Crap4CSharp/Crap4CSharp.csproj -c Release -o artifacts/cli
+dotnet tool install --tool-path artifacts/tools --add-source artifacts/cli Crap4CSharp.Tool --version 0.1.0-preview.1
+artifacts/tools/crap4csharp --help
+```
+
+On Windows, the installed command is `artifacts\tools\crap4csharp.exe`.
+
+For a public release, publish the reviewed package to NuGet first, then users can install it with `dotnet tool install --global Crap4CSharp.Tool --version <released-version>`. The resulting `crap4csharp` command can be found on `PATH` by CRAP IDE, or its absolute path can be entered in `crapide.cliPath`. Keep the package on the same host as the workspace; a Dev Container needs its own installation. Packaging and private installation do not publish the tool.
+
+The tool targets .NET 8. Analyzing a project also runs its tests, so a compatible .NET SDK, the project's test dependencies and `coverlet.collector` are still required. The current CLI supports one owning project per invocation and replaces `coverage/` in the invocation directory.
+
 From the project root you want to analyze:
 
 ```bash
