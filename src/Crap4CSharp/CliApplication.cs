@@ -15,10 +15,10 @@ public sealed class CliApplication
     // executable name to the crap4csharp product. Only ParseArguments consumes it (help + parse-error paths).
     private const string Usage = """
         Usage:
-          crap4csharp            Analyze all C# files under src/
-          crap4csharp --changed  Analyze changed C# files under src/
-          crap4csharp <path...>  Analyze files, or for directory args analyze <dir>/src/**/*.cs
-          crap4csharp --help     Print this help message
+          crap4csharp-ide            Analyze all C# files under src/
+          crap4csharp-ide --changed  Analyze changed C# files under src/
+          crap4csharp-ide <path...>  Analyze files, or for directory args analyze <dir>/src/**/*.cs
+          crap4csharp-ide --help     Print this help message
           --format <format>     Output console (default), json, or sarif
         """;
 

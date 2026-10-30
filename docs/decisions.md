@@ -12,6 +12,15 @@ Locked decisions for the C# port of `crap4java`. Source of truth alongside `docs
 - **Test fidelity:** every `crap4java` test gets a faithful C# counterpart with identical
   verification — except where an approved deliberate departure changes it.
 
+## IDE CLI distribution identity (Mr. Das, 2026-10-30)
+
+- The distributable backend required by CRAP IDE extensions has NuGet package ID
+  `Crap4CSharp.IDE.Cli` and executable command `crap4csharp-ide`. The distinct names identify this
+  fork's IDE-compatible CLI and avoid the already published `crap4csharp` tool and command.
+- The .NET assembly/namespace and machine-readable report contract remain unchanged. IDE adapters
+  continue to invoke the CLI as an external process. The matching VS Code/Cursor extension release
+  discovers `crap4csharp-ide` on the workspace host `PATH`.
+
 ## Machine-readable output
 
 - `--format console|json|sarif` selects rendering; console remains the default and its formatter is

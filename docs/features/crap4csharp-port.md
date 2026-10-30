@@ -164,8 +164,9 @@ Critical path: T1 → T2 → T9/T10 → T11 → T14 → T15 → T16. T3/T4/T5 an
   explicit `using`**; global usings exist only for `Xunit` + `FluentAssertions`. This is load-bearing
   for test authoring and reinforces the flat-namespace decision (keep domain types flat, no `Domain`
   namespace).
-- **C4 (deferred trivia).** If ever packed as a `dotnet tool`, set `ToolCommandName=crap4csharp` so the
-  CLI invocation name matches the contract.
+- **C4 (historical, superseded 2026-10-30).** The original port plan suggested
+  `ToolCommandName=crap4csharp`. The distributable IDE backend now uses `crap4csharp-ide`; see
+  `docs/decisions.md` and `docs/features/cli-distribution.md`.
 
 ### Carry-forward watch-items (from Anders's T5 review — for the T14/T15 CLI seam)
 

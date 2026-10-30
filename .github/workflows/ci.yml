@@ -58,12 +58,12 @@ jobs:
 
       - name: Install and exercise packaged command
         shell: pwsh
-        run: ./scripts/verify-tool-package.ps1 -PackageDirectory artifacts/cli -ToolDirectory "$env:RUNNER_TEMP/crap4csharp-tool"
+        run: ./scripts/verify-tool-package.ps1 -PackageDirectory artifacts/cli -ToolDirectory "$env:RUNNER_TEMP/crap4csharp-ide-cli"
 
       - name: Upload review package
         if: matrix.os == 'ubuntu-24.04'
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
         with:
-          name: crap4csharp-tool-0.1.0-preview.1
+          name: crap4csharp-ide-cli-0.1.0-preview.1
           path: artifacts/cli/*.nupkg
           if-no-files-found: error

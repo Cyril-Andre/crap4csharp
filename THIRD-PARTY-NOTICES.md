@@ -1,6 +1,6 @@
 # Third-party notices for the packaged CLI
 
-`Crap4CSharp.Tool` bundles the following runtime assemblies. This file maps each assembly to the notices shipped with its source NuGet package. The source packages declare the MIT license; the project's own license is CC0-1.0 in `LICENSE`.
+`Crap4CSharp.IDE.Cli` bundles the following runtime assemblies. This file maps each assembly to the notices shipped with its source NuGet package. The source packages declare the MIT license; the project's own license is CC0-1.0 in `LICENSE`.
 
 | Bundled assembly | Source NuGet package | Notices included here |
 | --- | --- | --- |

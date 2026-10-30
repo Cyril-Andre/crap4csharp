@@ -2,8 +2,20 @@
 
 ## Attribution
 
-`crap4csharp` continues the lineage of Robert C. ("Uncle Bob") Martin's original **crap4clj**, and is
-a C# port of its Java sibling **crap4java**.
+This repository is Cyril André's fork of [microsoft/crap4csharp](https://github.com/microsoft/crap4csharp).
+The upstream C# project ports Robert C. ("Uncle Bob") Martin's
+[crap4java](https://github.com/unclebob/crap4java), in the lineage of his
+[crap4clj](https://github.com/unclebob/crap4clj). The CRAP metric itself was introduced by
+Alberto Savoia and Bob Evans; Uncle Bob authored the language-specific tools in this lineage.
+
+This fork adds `--format json` and `--format sarif` to the existing CLI so IDE adapters for VS Code,
+Cursor, Rider, and Visual Studio can consume member metrics and source locations. The
+[CRAP IDE](https://github.com/Cyril-Andre/crapide) adapters call this CLI as an external process.
+The CLI is the required analysis backend for those extensions; the extensions display its results
+and do not calculate CRAP scores themselves. Install a compatible CLI on the workspace host.
+This fork and its CLI package are maintained by Cyril André, not by Microsoft or Uncle Bob; no
+endorsement by either is claimed. The upstream JSON/SARIF contribution is tracked
+in [microsoft/crap4csharp#11](https://github.com/microsoft/crap4csharp/pull/11).
 
 ---
 
@@ -99,19 +111,22 @@ dotnet build -c Release
 
 ### Install the preview .NET tool
 
-The JSON-capable fork can be packaged as `Crap4CSharp.Tool` version `0.1.0-preview.1`. The checkout's `global.json` requires .NET SDK 8.0.406 or a later compatible .NET 8 feature band; check `dotnet --list-sdks` before packing. From this checkout:
+The JSON-capable fork can be packaged as `Crap4CSharp.IDE.Cli` version `0.1.0-preview.1`. This is the CLI backend required by CRAP IDE extensions. The checkout's `global.json` requires .NET SDK 8.0.406 or a later compatible .NET 8 feature band; check `dotnet --list-sdks` before packing. From this checkout:
 
 ```bash
 dotnet pack src/Crap4CSharp/Crap4CSharp.csproj -c Release -o artifacts/cli
-dotnet tool install --tool-path artifacts/tools --add-source artifacts/cli Crap4CSharp.Tool --version 0.1.0-preview.1
-artifacts/tools/crap4csharp --help
+dotnet tool install --tool-path artifacts/tools --add-source artifacts/cli Crap4CSharp.IDE.Cli --version 0.1.0-preview.1
+artifacts/tools/crap4csharp-ide --help
 ```
 
-On Windows, the installed command is `artifacts\tools\crap4csharp.exe`.
+On Windows, the installed command is `artifacts\tools\crap4csharp-ide.exe`.
 
-For a public release, publish the reviewed package to NuGet first, then users can install it with `dotnet tool install --global Crap4CSharp.Tool --version <released-version>`. The resulting `crap4csharp` command can be found on `PATH` by CRAP IDE, or its absolute path can be entered in `crapide.cliPath`. Keep the package on the same host as the workspace; a Dev Container needs its own installation. Packaging and private installation do not publish the tool.
+For a public release, publish the reviewed package to NuGet first, then users can install it with `dotnet tool install --global Crap4CSharp.IDE.Cli --version <released-version>`. The matching CRAP IDE extension release finds `crap4csharp-ide` on `PATH` by default; its absolute path can also be entered in `crapide.cliPath`. Install the package on the same host as the workspace; a Dev Container needs its own installation. Packaging and private installation do not publish the tool.
 
-The package includes the project's license and the bundled dependencies' notices in `THIRD-PARTY-NOTICES.md` and `licenses/`. Another NuGet tool already uses the `crap4csharp` command name; check for a command collision before a global installation.
+The package includes the project's license and the bundled dependencies' notices in `THIRD-PARTY-NOTICES.md` and `licenses/`. Its distinct package ID and `crap4csharp-ide` command identify the CLI required by CRAP IDE extensions.
+
+For the release sequence, registry identities, and remaining decisions, see the
+[publication guide](docs/publication-guide.md).
 
 The tool targets .NET 8. Analyzing a project also runs its tests, so a compatible .NET SDK, the project's test dependencies and `coverlet.collector` are still required. The current CLI supports one owning project per invocation and replaces `coverage/` in the invocation directory.
 
