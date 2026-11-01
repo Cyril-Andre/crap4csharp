@@ -2,8 +2,20 @@
 
 ## Attribution
 
-`crap4csharp` continues the lineage of Robert C. ("Uncle Bob") Martin's original **crap4clj**, and is
-a C# port of its Java sibling **crap4java**.
+This repository is Cyril André's fork of [microsoft/crap4csharp](https://github.com/microsoft/crap4csharp).
+The upstream C# project ports Robert C. ("Uncle Bob") Martin's
+[crap4java](https://github.com/unclebob/crap4java), in the lineage of his
+[crap4clj](https://github.com/unclebob/crap4clj). The CRAP metric itself was introduced by
+Alberto Savoia and Bob Evans; Uncle Bob authored the language-specific tools in this lineage.
+
+This fork adds `--format json` and `--format sarif` to the existing CLI so IDE adapters for VS Code,
+Cursor, Rider, and Visual Studio can consume member metrics and source locations. The
+[CRAP IDE](https://github.com/Cyril-Andre/crapide) adapters call this CLI as an external process.
+The CLI is the required analysis backend for those extensions; the extensions display its results
+and do not calculate CRAP scores themselves. Install a compatible CLI on the workspace host.
+This fork and its CLI package are maintained by Cyril André, not by Microsoft or Uncle Bob; no
+endorsement by either is claimed. The upstream JSON/SARIF contribution is tracked
+in [microsoft/crap4csharp#11](https://github.com/microsoft/crap4csharp/pull/11).
 
 ---
 
@@ -31,7 +43,8 @@ Each invocation resolves the code unit under analysis and the test project that 
    marker; the owning unit is a `.csproj`. All analyzed files must resolve to a **single** owning project
    (one owning project per run).
 2. **Test project** — `<Project>.Tests.csproj` **or** `<Project>.UnitTests.csproj` whose
-   `ProjectReference`s **transitively** include the owning project. crap4csharp runs **only** that test
+   `ProjectReference`s **transitively** include the owning project (exact names first, then names
+   differing only by case if no exact candidate qualifies). crap4csharp runs **only** that test
    project, and only its **unit tests** (see *Unit-test determination* below).
 3. **Fail fast (exit 1)** when there is **no owning `.csproj`**, the analyzed files **span multiple
    projects**, or there is **no matching test project** — each with a greppable stderr message.
@@ -96,6 +109,27 @@ Build:
 dotnet build -c Release
 ```
 
+### Install the preview .NET tool
+
+The JSON-capable fork can be packaged as `Crap4CSharp.IDE.Cli` version `0.1.0-preview.1`. This is the CLI backend required by CRAP IDE extensions. The checkout's `global.json` requires .NET SDK 8.0.406 or a later compatible .NET 8 feature band; check `dotnet --list-sdks` before packing. From this checkout:
+
+```bash
+dotnet pack src/Crap4CSharp/Crap4CSharp.csproj -c Release -o artifacts/cli
+dotnet tool install --tool-path artifacts/tools --add-source artifacts/cli Crap4CSharp.IDE.Cli --version 0.1.0-preview.1
+artifacts/tools/crap4csharp-ide --help
+```
+
+On Windows, the installed command is `artifacts\tools\crap4csharp-ide.exe`.
+
+For a public release, publish the reviewed package to NuGet first, then users can install it with `dotnet tool install --global Crap4CSharp.IDE.Cli --version <released-version>`. The matching CRAP IDE extension release finds `crap4csharp-ide` on `PATH` by default; its absolute path can also be entered in `crapide.cliPath`. Install the package on the same host as the workspace; a Dev Container needs its own installation. Packaging and private installation do not publish the tool.
+
+The package includes the project's license and the bundled dependencies' notices in `THIRD-PARTY-NOTICES.md` and `licenses/`. Its distinct package ID and `crap4csharp-ide` command identify the CLI required by CRAP IDE extensions.
+
+For the release sequence, registry identities, and remaining decisions, see the
+[publication guide](docs/publication-guide.md).
+
+The tool targets .NET 8. Analyzing a project also runs its tests, so a compatible .NET SDK, the project's test dependencies and `coverlet.collector` are still required. The current CLI supports one owning project per invocation and replaces `coverage/` in the invocation directory.
+
 From the project root you want to analyze:
 
 ```bash
@@ -110,6 +144,7 @@ dotnet run --project src/Crap4CSharp -c Release
 --changed             Analyze changed C# files under src/
 <file ...>            Analyze only these files
 <directory ...>       Analyze all C# files under each directory's src/ subtree
+--format <format>     console (default), json, or sarif
 ```
 
 Examples:
@@ -121,6 +156,33 @@ dotnet run --project src/Crap4CSharp -c Release -- --changed
 dotnet run --project src/Crap4CSharp -c Release -- src/Sample.cs
 dotnet run --project src/Crap4CSharp -c Release -- project-a project-b
 ```
+
+`--format` accepts one lowercase value and may appear before or after paths. With no paths it
+analyzes `src/`; it can also be combined with `--changed`. After building, use the compiled CLI to
+keep launcher/build messages out of redirected output:
+
+```bash
+dotnet src/Crap4CSharp/bin/Release/net8.0/Microsoft.Crap4CSharp.dll --format console
+dotnet src/Crap4CSharp/bin/Release/net8.0/Microsoft.Crap4CSharp.dll --format json > crap.json
+dotnet src/Crap4CSharp/bin/Release/net8.0/Microsoft.Crap4CSharp.dll --format sarif > crap.sarif
+```
+
+JSON contains a `members` array. Each member has `name` (qualified type plus member name), `file`,
+`startLine`, `endLine`, `complexity`, `coveragePercent` (0–100), and `crap`. Metrics are unrounded
+numbers; unavailable coverage and CRAP are `null`. Locations use 1-based lines and paths relative to
+the invocation directory with `/` separators where possible; unavailable location fields are `null`.
+Overloads share a name and are distinguished by their file and line range. Members are sorted by CRAP
+descending, with unavailable scores last and ordinal file/name and line tie-breakers.
+
+SARIF 2.1.0 reports only members whose CRAP is **greater than 8.0**, using rule `CRAP001` at `warning`
+level for the existing quality gate. Results include numeric metrics, member names and available
+source locations. Relative source URIs are percent-encoded and use `%SRCROOT%` to denote the invocation
+directory; consumers can map that base to their checkout.
+
+JSON/SARIF analysis writes only the document to stdout, with coverage progress and diagnostics on
+stderr. No files produces an empty document and exit 0; a threshold failure still produces the report
+and exits 2; fatal errors exit 1 without a report. Format-related usage errors go to stderr.
+`--help` retains precedence over all other arguments and prints usage to stdout, even with `--format`.
 
 ## Exit codes
 

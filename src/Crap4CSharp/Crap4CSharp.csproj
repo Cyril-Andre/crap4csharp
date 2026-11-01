@@ -3,12 +3,32 @@
   <PropertyGroup>
     <OutputType>Exe</OutputType>
     <TargetFramework>net8.0</TargetFramework>
+    <PackAsTool>true</PackAsTool>
+    <ToolCommandName>crap4csharp-ide</ToolCommandName>
+    <PackageId>Crap4CSharp.IDE.Cli</PackageId>
+    <Version>0.1.0-preview.1</Version>
+    <Authors>Cyril-Andre</Authors>
+    <Description>Required CRAP analysis CLI for CRAP IDE extensions, with console, JSON, and SARIF reports.</Description>
+    <PackageLicenseExpression>CC0-1.0</PackageLicenseExpression>
+    <PackageReadmeFile>README.md</PackageReadmeFile>
+    <PackageProjectUrl>https://github.com/Cyril-Andre/crap4csharp</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/Cyril-Andre/crap4csharp.git</RepositoryUrl>
   </PropertyGroup>
 
   <ItemGroup>
+    <None Include="../../README.md" Pack="true" PackagePath="/" />
+    <None Include="../../LICENSE" Pack="true" PackagePath="/" />
+    <None Include="../../THIRD-PARTY-NOTICES.md" Pack="true" PackagePath="/" />
+    <None Include="../../licenses/MIT.txt" Pack="true" PackagePath="licenses/" />
+    <None Include="../../licenses/Roslyn-4.14.0-ThirdPartyNotices.rtf" Pack="true" PackagePath="licenses/" />
+    <None Include="../../licenses/DotNetRuntime-9.0.0-ThirdPartyNotices.txt" Pack="true" PackagePath="licenses/" />
     <PackageReference Include="Microsoft.CodeAnalysis.CSharp" Version="4.14.0" />
   </ItemGroup>
 
   <Import Project="..\..\Crap4CSharp.Common.targets" />
+
+  <PropertyGroup>
+    <Copyright>crap4csharp contributors</Copyright>
+  </PropertyGroup>
 
 </Project>
